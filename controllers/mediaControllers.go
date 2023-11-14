@@ -14,7 +14,7 @@ import (
 
 func GetAllMedia(ctx *gin.Context) {
 	Media := []models.Media{}
-	if err := databases.DB.Debug().Find(&Media).Error; err != nil {
+	if err := databases.DB.Debug().Preload("User").Find(&Media).Error; err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error":   "can't find media",
 			"message": err.Error(),

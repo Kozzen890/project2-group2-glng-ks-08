@@ -28,3 +28,9 @@ type UpdateMediaRes struct {
 	UpdatedAt      time.Time `json:"updated_at"`
 }
 
+type UserResponse struct {
+	Id              uint   `json:"id"`
+	Username        string `json:"username"`
+	ProfileImageUrl string `json:"profile_image_url"`
+}
+
