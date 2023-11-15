@@ -34,3 +34,12 @@ type UserResponse struct {
 	ProfileImageUrl string `json:"profile_image_url"`
 }
 
+type PhotoUpdateRes struct {
+	Id        int       `json:"id"`
+	Title     string    `json:"title"`
+	Caption   string    `json:"caption"`
+	PhotoUrl  string    `json:"photo_url"`
+	UserId    uint      `json:"user_id"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+

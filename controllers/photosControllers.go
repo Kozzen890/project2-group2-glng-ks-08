@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/Kozzen890/project2-group2-glng-ks-08/databases"
+	"github.com/Kozzen890/project2-group2-glng-ks-08/dto"
 	"github.com/Kozzen890/project2-group2-glng-ks-08/helper"
 	"github.com/Kozzen890/project2-group2-glng-ks-08/models"
 	"github.com/dgrijalva/jwt-go"
@@ -22,9 +23,7 @@ func GetAllPhotos(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"photos": Photos,
-	})
+	ctx.JSON(http.StatusOK, Photos)
 }
 
 func GetPhotoById(ctx *gin.Context) {
@@ -106,7 +105,16 @@ func UpdatePhoto(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, Photos)
+	res := dto.PhotoUpdateRes{
+		Id:        photoId,
+		Title:     Photos.Title,
+		Caption:   Photos.Caption,
+		PhotoUrl:  Photos.PhotoUrl,
+		UserId:    Photos.UserId,
+		UpdatedAt: Photos.UpdatedAt,
+	}
+	
+	ctx.JSON(http.StatusOK, res)
 }
 
 func DeletePhoto(ctx *gin.Context) {
