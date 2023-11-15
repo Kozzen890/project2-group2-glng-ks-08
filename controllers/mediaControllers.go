@@ -78,15 +78,6 @@ func CreateMedia(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, responses)
 
-	// ctx.JSON(http.StatusCreated, gin.H{
-	// 	"message":					"Upload Social Media has been successfully",
-	// 	"id":               Media.Id,
-	// 	"name":             Media.Name,
-	// 	"social_media_url": Media.SocialMediaUrl,
-	// 	"user_id":          Media.UserId,
-	// 	"created_at":       Media.CreatedAt,
-	// })
-
 }
 
 func UpdateMedia(ctx *gin.Context){
