@@ -10,6 +10,25 @@ type UpdateUserRes struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// type GetCommentsRes struct {
+// 	Id        uint      `json:"id"`
+// 	Message     string    `json:"message"`
+// 	PhotoId  string    `json:"photo_id"`
+// 	UserId       int       `json:"user_id"`
+// 	CreatedAt time.Time `json:"created_at"`
+// 	UpdatedAt time.Time `json:"updated_at"`
+// 	User  `json:"user"`
+// }
+
+type UploadCommentResponse struct {
+	Status string `json:"status"`
+	Id        uint      `json:"id"`
+	Message   string    `json:"message"`
+	PhotoId   uint      `json:"photo_id"`
+	UserId    uint      `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 type UploadMediaRes struct {
 	Message string `json:"message"`
 	Id             uint      `json:"id"`
