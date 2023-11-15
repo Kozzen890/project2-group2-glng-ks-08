@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/Kozzen890/project2-group2-glng-ks-08/databases"
+	"github.com/Kozzen890/project2-group2-glng-ks-08/dto"
 	"github.com/Kozzen890/project2-group2-glng-ks-08/helper"
 	"github.com/Kozzen890/project2-group2-glng-ks-08/models"
 	"github.com/dgrijalva/jwt-go"
@@ -72,15 +73,25 @@ func UploadComment(ctx *gin.Context) {
 		})
 		return
 	}
+	response := dto.UploadCommentResponse{
+		Status: "Upload Comment has been successfully",
+		Id : Comment.Id,
+		Message:   Comment.Message,
+		PhotoId:   Comment.PhotoId,
+		UserId:    Comment.UserId,
+		CreatedAt: Comment.CreatedAt,
+	}
 
-	ctx.JSON(http.StatusCreated, gin.H{
-		"result": "Upload Comment has been successfully",
-		"id":         Comment.Id,
-		"message":    Comment.Message,
-		"photo_id":   Comment.PhotoId,
-		"user_id":    Comment.UserId,
-		"created_at": Comment.CreatedAt,
-	})
+	ctx.JSON(http.StatusCreated, response)
+	
+	// ctx.JSON(http.StatusCreated, gin.H{
+	// 	"result": "Upload Comment has been successfully",
+	// 	"id":         Comment.Id,
+	// 	"message":    Comment.Message,
+	// 	"photo_id":   Comment.PhotoId,
+	// 	"user_id":    Comment.UserId,
+	// 	"created_at": Comment.CreatedAt,
+	// })
 }
 
 func EditComment(ctx *gin.Context) {
