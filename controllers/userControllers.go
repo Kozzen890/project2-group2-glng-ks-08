@@ -13,6 +13,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func GetUsers(ctx *gin.Context) {
+	contentType := helper.GetContentType(ctx)
+	_, _ = databases.DB, contentType
+
+	Users := []models.User{}
+	if err := databases.DB.Preload("Photos").Preload("Comments").Preload("Medias").Find(&Users).Error; err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "can't find data",
+			"message": err.Error(),
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "success",
+		"data":    Users,
+	})
+}
+
 func UserRegister(ctx *gin.Context) {
 	db := databases.GetDB()
 	contentType := helper.GetContentType(ctx)
