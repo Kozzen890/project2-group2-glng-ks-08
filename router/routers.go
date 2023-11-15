@@ -18,6 +18,7 @@ func InitRouter() *gin.Engine {
 
 	userRouter := router.Group("/users")
 	{
+		userRouter.GET("/", controllers.GetUsers)
 		userRouter.POST("/register", controllers.UserRegister)
 		userRouter.POST("/login", controllers.UserLogin)
 		userRouter.PUT("/:userId", middlewares.Authentication(), controllers.UserUpdate)
