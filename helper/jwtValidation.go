@@ -10,10 +10,10 @@ import (
 
 var secretKey = "5e64a1cf2b8f4138a1bb0c4e67890123"
 
-func GenerateToken(id uint, username string, email string) string {
+func GenerateToken(id uint, name string, email string) string {
 	claims := jwt.MapClaims{
 		"id":    id,
-		"username": username,
+		"name": name,
 		"email": email,
 	}
 

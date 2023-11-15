@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/Kozzen890/project2-group2-glng-ks-08/databases"
-	"github.com/Kozzen890/project2-group2-glng-ks-08/dto"
 	"github.com/Kozzen890/project2-group2-glng-ks-08/helper"
 	"github.com/Kozzen890/project2-group2-glng-ks-08/models"
-	"github.com/asaskevich/govalidator"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
@@ -41,34 +40,6 @@ func UserRegister(ctx *gin.Context) {
 		"name":  User.Name,
 		"age": User.Age,
 	})
-
-	// db := databases.GetDB()
-	// contentType := helper.GetContentType(ctx)
-	// _, _ = db, contentType
-	// User := models.User{}
-
-	// if contentType == "application/json" {
-	// 	ctx.ShouldBindJSON(&User)
-	// } else {
-	// 	ctx.ShouldBind(&User)
-	// }
-
-	// err := db.Create(&User).Error
-
-	// if err != nil {
-	// 	ctx.JSON(http.StatusBadRequest, gin.H{
-	// 		"error":   "Bad Request",
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
-
-	// ctx.JSON(http.StatusCreated, gin.H{
-	// 	"id":       User.Id,
-	// 	"name": User.Name,
-	// 	"email":    User.Email,
-	// 	"age":      User.Age,
-	// })
 }
 
 func UserLogin(ctx *gin.Context){
@@ -100,7 +71,7 @@ func UserLogin(ctx *gin.Context){
 		return
 	}
 
-	token := helper.GenerateToken(User.Id, User.Name, User.Email)
+	token := helper.GenerateToken(uint(User.GormModel.Id), User.Name, User.Email)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"token": token,
@@ -108,48 +79,47 @@ func UserLogin(ctx *gin.Context){
 }
 
 func UserUpdate(ctx *gin.Context) {
+	GetId, _ := strconv.Atoi(ctx.Param("userId"))
 	UserData := ctx.MustGet("userData").(jwt.MapClaims)
-	request := dto.UpdateUserReq{}
-	// contentType := helper.GetContentType(ctx)
-	userEntity := models.User{}
-	getUserID, _ := strconv.Atoi(ctx.Param("userId"))
-	userId := uint(UserData["id"].(float64))
+	UserId := UserData["id"].(float64)
 
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
-		return
+	contextType := helper.GetContentType(ctx)
+	_, _ = databases.DB, contextType
+
+	User := models.User{}
+	OldUser := models.User{}
+
+	if contextType == "application/json" {
+		ctx.ShouldBindJSON(&User)
+	} else {
+		ctx.ShouldBind(&User)
 	}
 
-	_, err := govalidator.ValidateStruct(request)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	
-	userEntity.Id = userId
-	
-	if userId != uint(getUserID) {
-		ctx.JSON(http.StatusUnauthorized, gin.H{
-			"error":   "Unauthorized",
-			"message": "You are not authorized to edit this user.",
+	User.UpdatedAt = time.Now()
+	User.Id = int(UserId)
+
+	if err := databases.DB.Where("id=?", GetId).Take(&OldUser).Error; err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "data not found",
+			"message": err.Error(),
 		})
 		return
 	}
-
-	if err := databases.DB.Model(&userEntity).Where("id = ?", getUserID).Updates(request).Error; err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Failed to update user data"})
+	if err := databases.DB.Preload("Photos").Preload("Comments").Preload("Medias").Model(&OldUser).Updates(&User).Error; err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "failed to update data",
+			"message": err.Error(),
+		})
 		return
 	}
-
-	res := dto.UpdateUserRes{
-		Id:        userEntity.Id,
-		Email:     userEntity.Email,
-		Username:  userEntity.Name,
-		Age:       userEntity.Age,
-		UpdatedAt: userEntity.UpdatedAt,
-	}
-
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Update User Success",
+		"id":         OldUser.Id,
+		"email":      OldUser.Email,
+		"username":   OldUser.Name,
+		"age":        OldUser.Age,
+		"updated_at": OldUser.UpdatedAt,
+	})
 }
 
 func UserDelete(ctx *gin.Context) {
@@ -172,14 +142,6 @@ func UserDelete(ctx *gin.Context) {
 		})
 		return
 	}
-
-	// if err := databases.DB.Delete(&userEntity).Error; err != nil {
-	// 	ctx.JSON(http.StatusUnauthorized, gin.H{
-	// 		"error":   "Unauthorizated",
-	// 		"message": err.Error(),
-	// 	})
-	// 	return
-	// }
 
 	ctx.JSON(http.StatusOK, gin.H{
 		// "message": "your account has been succesfully deleted",

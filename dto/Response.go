@@ -5,7 +5,7 @@ import "time"
 type UpdateUserRes struct {
 	Id        uint      `json:"id"`
 	Email     string    `json:"email"`
-	Username  string    `json:"username"`
+	Name  string    `json:"name"`
 	Age       int       `json:"age"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -30,7 +30,7 @@ type UpdateMediaRes struct {
 
 type UserResponse struct {
 	Id              uint   `json:"id"`
-	Username        string `json:"username"`
+	Name        string `json:"name"`
 	ProfileImageUrl string `json:"profile_image_url"`
 }
 
