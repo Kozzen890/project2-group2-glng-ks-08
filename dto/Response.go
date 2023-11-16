@@ -10,15 +10,48 @@ type UpdateUserRes struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-// type GetCommentsRes struct {
-// 	Id        uint      `json:"id"`
-// 	Message     string    `json:"message"`
-// 	PhotoId  string    `json:"photo_id"`
-// 	UserId       int       `json:"user_id"`
-// 	CreatedAt time.Time `json:"created_at"`
-// 	UpdatedAt time.Time `json:"updated_at"`
-// 	User  `json:"user"`
-// }
+
+
+type GetPhotosWithUser struct {
+	Id        uint       `json:"id"`
+	Title     string    `json:"title"`
+	Caption   string    `json:"caption"`
+	PhotoURL  string    `json:"photo_url"`
+	UserId    uint       `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	User      GetUsersPhoto
+}
+
+type GetCommentsRes struct {
+	Id        uint      `json:"id"`
+	Message     string    `json:"message"`
+	PhotoId  uint    `json:"photo_id"`
+	UserId       int       `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	User  GetUserComments
+	Photo GetPhotoComments
+}
+
+type GetPhotoComments struct {
+	Id  uint       `json:"id"`
+	Title    string `json:"title"`
+	Caption string `json:"caption"`
+	PhotoURL string `json:"photo_url"`
+	UserId    uint       `json:"user_id"`
+}
+
+type GetUserComments struct {
+	Id  uint       `json:"id"`
+	Email    string `json:"email"`
+	Name string `json:"name"`
+}
+
+type GetUsersPhoto struct {
+	Email    string `json:"email"`
+	Name string `json:"name"`
+}
 
 type UploadCommentResponse struct {
 	Status string `json:"status"`

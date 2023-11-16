@@ -13,8 +13,7 @@ import (
 )
 
 func GetAllPhotos(ctx *gin.Context) {
-	Photos := []models.Photo{}
-
+	var Photos []models.Photo
 	if err := databases.DB.Debug().Preload("Comments").Preload("User").Find(&Photos).Error; err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error":   "photo not found",
@@ -23,26 +22,75 @@ func GetAllPhotos(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, Photos)
+	var res []dto.GetPhotosWithUser
+
+	// Iterasi melalui setiap foto dan buat objek DTO
+	for _, photo := range Photos {
+		user := dto.GetUsersPhoto{
+			Email: photo.User.Email,
+			Name:  photo.User.Name,
+		}
+
+		dtoPhoto := dto.GetPhotosWithUser{
+			Id:        photo.Id,
+			Title:     photo.Title,
+			Caption:   photo.Caption,
+			PhotoURL:  photo.PhotoUrl,
+			UserId:    photo.UserId,
+			CreatedAt: photo.CreatedAt,
+			UpdatedAt: photo.UpdatedAt,
+			User:      user,
+		}
+
+		// Tambahkan objek DTO ke slice
+		res = append(res, dtoPhoto)
+	}
+	ctx.JSON(http.StatusOK, res)
 }
 
 func GetPhotoById(ctx *gin.Context) {
-	Photos := models.Photo{}
-	photoId, _ := strconv.Atoi(ctx.Param("photoId"))
+	var photo models.Photo
 
-	Photos.Id = uint(photoId)
-
-	err := databases.DB.First(&Photos, "id = ?", photoId).Error
-
+	// Mendapatkan ID dari parameter URL
+	photoId, err := strconv.Atoi(ctx.Param("photoId"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"err":     "Bad Request",
+			"error": "Invalid photo ID",
+		})
+		return
+	}
+
+	// Menggunakan Preload untuk memuat informasi pengguna terkait
+	err = databases.DB.Debug().Preload("User").First(&photo, "id = ?", photoId).Error
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error":   "Photo not found",
 			"message": err.Error(),
 		})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, Photos)
+	// Memeriksa apakah ada pengguna terkait dengan foto
+	var user dto.GetUsersPhoto
+	if photo.User != nil {
+		user = dto.GetUsersPhoto{
+			Email: photo.User.Email,
+			Name:  photo.User.Name,
+		}
+	}
+
+	// Membuat objek DTO untuk respons
+	res := dto.GetPhotosWithUser{
+		Id:        photo.Id,
+		Title:     photo.Title,
+		Caption:   photo.Caption,
+		PhotoURL:  photo.PhotoUrl,
+		UserId:    photo.UserId,
+		CreatedAt: photo.CreatedAt,
+		UpdatedAt: photo.UpdatedAt,
+		User:      user,
+	}
+	ctx.JSON(http.StatusOK, res)
 }
 
 func UploadPhoto(ctx *gin.Context) {

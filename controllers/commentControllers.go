@@ -13,7 +13,8 @@ import (
 )
 
 func GetAllComment(ctx *gin.Context) {
-	Comment := []models.Comment{}
+	// Comment := []models.Comment{}
+	var Comment []models.Comment
 	if err := databases.DB.Debug().Preload("User").Preload("Photo").Find(&Comment).Error; err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error":   "comment not found",
@@ -22,9 +23,40 @@ func GetAllComment(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"data": Comment,
-	})
+	var res []dto.GetCommentsRes
+
+	// Iterasi melalui setiap foto dan buat objek DTO
+	for _, comment := range Comment {
+		user := dto.GetUserComments{
+			Id: uint(comment.User.Id),
+			Email: comment.User.Email,
+			Name:  comment.User.Name,
+		}
+
+		photos := dto.GetPhotoComments{
+			Id : comment.Photo.Id,
+			Title: comment.Photo.Title,
+			Caption: comment.Photo.Caption,
+			PhotoURL: comment.Photo.PhotoUrl,
+			UserId: comment.Photo.UserId,
+		}
+
+		dtoComments := dto.GetCommentsRes{
+			Id:        comment.Id,
+			Message:     comment.Message,
+			PhotoId:   comment.PhotoId,
+			UserId:  int(comment.UserId),
+			CreatedAt: comment.CreatedAt,
+			UpdatedAt: comment.UpdatedAt,
+			User:      user,
+			Photo: photos,
+		}
+
+		// Tambahkan objek DTO ke slice
+		res = append(res, dtoComments)
+	}
+
+	ctx.JSON(http.StatusOK, res)
 }
 
 func GetCommentById(ctx *gin.Context) {
