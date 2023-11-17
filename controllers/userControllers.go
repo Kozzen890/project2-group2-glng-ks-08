@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Kozzen890/project2-group2-glng-ks-08/databases"
+	"github.com/Kozzen890/project2-group2-glng-ks-08/dto"
 	"github.com/Kozzen890/project2-group2-glng-ks-08/helper"
 	"github.com/Kozzen890/project2-group2-glng-ks-08/models"
 	"github.com/dgrijalva/jwt-go"
@@ -17,7 +18,8 @@ func GetUsers(ctx *gin.Context) {
 	contentType := helper.GetContentType(ctx)
 	_, _ = databases.DB, contentType
 
-	Users := []models.User{}
+	// Users := []models.User{}
+	var Users []models.User
 	if err := databases.DB.Preload("Photos").Preload("Comments").Preload("Medias").Find(&Users).Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "can't find data",
@@ -25,10 +27,63 @@ func GetUsers(ctx *gin.Context) {
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "success",
-		"data":    Users,
-	})
+
+	var res []dto.GetUserRes
+
+	for _, user := range Users {
+		var userPhotos []dto.GetUserPhotos
+		var userComments []dto.GetCommentsUser
+		var userMedias []dto.GetUserMedia
+
+    // Iterasi melalui setiap foto pada slice user.Photos
+    for _, photo := range user.Photos {
+      photos := dto.GetUserPhotos{
+        Id:       photo.Id,
+      	Title:    photo.Title,
+        Caption:  photo.Caption,
+        PhotoURL: photo.PhotoUrl,
+      }
+			userPhotos = append(userPhotos, photos)
+    }
+
+		// Iterasi melalui setiap comment pada slice user.Comments
+    for _, comment := range user.Comments {
+      comments := dto.GetCommentsUser{
+        Id:      comment.Id,
+        UserId:  comment.UserId,
+        PhotoId: comment.PhotoId,
+        Message: comment.Message,
+      }
+
+      userComments = append(userComments, comments)
+    }
+
+		for _, media := range user.Medias {
+			medias := dto.GetUserMedia {
+				Id:								media.Id,
+				Name: 						media.Name,
+				SocialMediaUrl:		media.SocialMediaUrl,
+			}
+			userMedias = append(userMedias, medias)
+		}
+
+		dtoUsers := dto.GetUserRes{
+			Id:       	uint(user.Id),
+			Name:     	user.Name,
+			Email:   		user.Email,
+			Age:  			user.Age,
+			CreatedAt: 	user.CreatedAt,
+			UpdatedAt: 	user.UpdatedAt,
+			Photos:     userPhotos,
+			Comments: 	userComments,
+			Media: userMedias,
+		}
+
+		// Tambahkan objek DTO ke slice
+		res = append(res, dtoUsers)
+	}
+
+	ctx.JSON(http.StatusOK, res)
 }
 
 func UserRegister(ctx *gin.Context) {

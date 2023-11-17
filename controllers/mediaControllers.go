@@ -13,17 +13,41 @@ import (
 )
 
 func GetAllMedia(ctx *gin.Context) {
-	Media := []models.Media{}
+	var Media []models.Media
 	if err := databases.DB.Debug().Preload("User").Find(&Media).Error; err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error":   "can't find media",
 			"message": err.Error(),
 		})
 	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "Get All Media has been successful",
-		"media": Media,
-	})
+
+	var res []dto.GetSocialMediaRes
+
+	for _, media := range Media {
+		user := dto.GetUserSocialMediaRes{
+			Id: uint(media.User.Id),
+			Username:  media.User.Name,
+			ProfileImageUrl: "",
+		}
+
+		dtoMedia := dto.GetSocialMediaRes{
+			Id:        media.Id,
+			Name:     media.Name,
+			SocialMediaUrl:   media.SocialMediaUrl,
+			UserId:    media.UserId,
+			CreatedAt: media.CreatedAt,
+			UpdatedAt: media.UpdatedAt,
+			User:      user,
+		}
+
+		// Tambahkan objek DTO ke slice
+		res = append(res, dtoMedia)
+	}
+	ctx.JSON(http.StatusOK, res)
+	// ctx.JSON(http.StatusOK, gin.H{
+	// 	"message": "Get All Media has been successful",
+	// 	"media": Media,
+	// })
 }
 
 func GetSocialMediaById(ctx *gin.Context) {
