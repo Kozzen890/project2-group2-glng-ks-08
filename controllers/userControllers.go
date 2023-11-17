@@ -55,18 +55,7 @@ func GetUsers(ctx *gin.Context) {
 			userPhotos = append(userPhotos, photos)
 		}
 
-		// // Iterasi melalui setiap comment pada slice user.Comments
-    // for _, comment := range user.Comments {
-    //   comments := dto.GetCommentsUser{
-    //     Id:      comment.Id,
-    //     UserId:  comment.UserId,
-    //     PhotoId: comment.PhotoId,
-    //     Message: comment.Message,
-    //   }
-
-    //   userComments = append(userComments, comments)
-    // }
-
+		// Iterasi melalui setiap comment pada slice user.Comments
 		for _, comment := range userComments {
 			comments := dto.GetCommentsUser {
 				Id: comment.Id,
