@@ -82,7 +82,6 @@ func GetUsers(ctx *gin.Context) {
 		// Tambahkan objek DTO ke slice
 		res = append(res, dtoUsers)
 	}
-
 	ctx.JSON(http.StatusOK, res)
 }
 
