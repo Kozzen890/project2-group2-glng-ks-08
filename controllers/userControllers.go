@@ -70,8 +70,8 @@ func GetUsers(ctx *gin.Context) {
 		dtoUsers := dto.GetUserRes{
 			Id:       	uint(user.Id),
 			Name:     	user.Name,
-			Email:   		user.Email,
-			Age:  			user.Age,
+			Email:   	user.Email,
+			Age:  		user.Age,
 			CreatedAt: 	user.CreatedAt,
 			UpdatedAt: 	user.UpdatedAt,
 			Photos:     userPhotos,
