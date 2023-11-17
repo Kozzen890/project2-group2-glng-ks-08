@@ -35,16 +35,7 @@ func GetUsers(ctx *gin.Context) {
 		var userComments []dto.GetCommentsUser
 		var userMedias []dto.GetUserMedia
 
-    // Iterasi melalui setiap foto pada slice user.Photos
-    // for _, photo := range user.Photos {
-    //   photos := dto.GetUserPhotos{
-    //     Id:       photo.Id,
-    //   	Title:    photo.Title,
-    //     Caption:  photo.Caption,
-    //     PhotoURL: photo.PhotoUrl,
-    //   }
-		// 	userPhotos = append(userPhotos, photos)
-    // }
+		// Iterasi melalui setiap foto pada slice user.Photos
 		for _, photo := range user.Photos {
 			photos := dto.GetUserPhotos {
 				Id: photo.Id,
@@ -66,6 +57,7 @@ func GetUsers(ctx *gin.Context) {
 			userComments = append(userComments, comments)
 		}
 
+		// Iterasi melalui setiap media pada slice user.Medias
 		for _, media := range user.Medias {
 			medias := dto.GetUserMedia {
 				Id:	media.Id,
