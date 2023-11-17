@@ -47,7 +47,7 @@ func GetUsers(ctx *gin.Context) {
 		}
 
 		// Iterasi melalui setiap comment pada slice user.Comments
-		for _, comment := range userComments {
+		for _, comment := range user.Comments {
 			comments := dto.GetCommentsUser {
 				Id: comment.Id,
 				UserId: comment.UserId,
