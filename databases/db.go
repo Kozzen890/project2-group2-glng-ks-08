@@ -3,6 +3,7 @@ package databases
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/Kozzen890/project2-group2-glng-ks-08/models"
 	"gorm.io/driver/postgres"
@@ -21,7 +22,9 @@ var (
 )
 
 func StartDB() {
-	init := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbname, dbPort)
+	// init := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbname, dbPort)
+
+	init := os.Getenv("DATABASE_URL")
 	dsn := init
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
