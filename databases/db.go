@@ -11,11 +11,11 @@ import (
 )
 
 var (
-	host       = "localhost"
-	user       = "postgres"
-	password   = "postgres890"
-	dbPort     = "5432"
-	dbname     = "mygram"
+	// host       = "localhost"
+	// user       = "postgres"
+	// password   = "postgres890"
+	// dbPort     = "5432"
+	// dbname     = "mygram"
 	// debug_mode = os.Getenv("DEBUG_MODE")
 	DB         *gorm.DB
 	err        error
