@@ -1,1 +1,1 @@
-web:  ./bin/project2-group2-glng-ks-08
+web:  bin/project2-group2-glng-ks-08
