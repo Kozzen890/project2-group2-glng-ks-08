@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	port := os.Getenv("PORT")
+	PORT := os.Getenv("PORT")
 
-	if port == "" {
-		port = ":8080"
+	if PORT == "" {
+		PORT = "8080"
 	}
 
-	log.Printf("Starting server on port %s\n", port)
+	log.Printf("Starting server on port %s\n", PORT)
 	databases.StartDB()
-	routers.InitRouter().Run(port)
+	routers.InitRouter().Run(":" + PORT)
 }
