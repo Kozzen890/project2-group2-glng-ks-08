@@ -15,7 +15,7 @@ var (
 	user = os.Getenv("PGUSER")
 	password   = os.Getenv("PGPASSWORD")
 	dbPort     = os.Getenv("PGPORT")
-	dbname     = os.Getenv("PGDBNAME")
+	dbname     = os.Getenv("PGDATABASE")
 	// host       = "localhost"
 	// user       = "postgres"
 	// password   = "postgres890"
