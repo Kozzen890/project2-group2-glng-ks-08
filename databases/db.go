@@ -11,22 +11,28 @@ import (
 )
 
 var (
-	host       = "localhost"
-	user       = "postgres"
-	password   = "postgres890"
-	dbPort     = "5432"
-	dbname     = "mygram"
+	host = os.Getenv("PGHOST")
+	user = os.Getenv("PGUSER")
+	password   = os.Getenv("PGPASSWORD")
+	dbPort     = os.Getenv("PGPORT")
+	dbname     = os.Getenv("PGDBNAME")
+	// host       = "localhost"
+	// user       = "postgres"
+	// password   = "postgres890"
+	// dbPort     = "5432"
+	// dbname     = "mygram"
 	// debug_mode = os.Getenv("DEBUG_MODE")
 	DB         *gorm.DB
 	err        error
 )
 
 func StartDB() {
-	database_url := os.Getenv("DATABASE_URL")
+	// database_url := os.Getenv("DATABASE_URL")
 
-	if database_url == "" {
-		database_url = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbname, dbPort)
-	}
+	// if database_url == "" {
+	// 	database_url = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbname, dbPort)
+	// }
+	database_url := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbname, dbPort)
 	// init := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbname, dbPort)
 
 	dsn := database_url
